@@ -27,6 +27,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	@Autowired
 	private CustomUserService customUserService;
 	
+	/*
+	 * This method call when any request come with token 
+	 * here we validate token
+	 * and check user is validate or not 
+	 * for give response*/
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -37,6 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		if(authHeader!=null && authHeader.startsWith("Bearer")) {
 			token = authHeader.substring(7);
 			username = jwtService.extractUsername(token);
+			this.jwtService.setTokenForUser(token);
 		}
 		
 		if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {

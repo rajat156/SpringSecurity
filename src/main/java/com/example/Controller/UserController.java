@@ -57,12 +57,30 @@ public class UserController {
 	}
 	
 	
+	/*
+	 * This API return username from token we have
+	 * just hit api request with java web token
+	  */
+	
+	@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+	@GetMapping("/getUserName")
+	public String getUserNameByToken() {
+		return this.jwtService.getUserNameByToken();
+	}
+	
+	
+/*
+ * This API is allowed for all members to hit with username and password
+ * then API check username and password is valid or not
+ *   if valid -> a java web token generate for request 
+ *   java web token use every time we hit any api 
+ *   as per user role user easily access api
+  */
 	@PostMapping("/authenticate")
 	public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 		Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if(authenticate.isAuthenticated())
         return this.jwtService.generateToken(authRequest.getUsername());
-	//		return "Successful login";
 		else
 			throw new UsernameNotFoundException("Invalid User Request");
 	}

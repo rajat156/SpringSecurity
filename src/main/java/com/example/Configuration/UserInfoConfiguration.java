@@ -25,6 +25,8 @@ public class UserInfoConfiguration implements UserDetails {
 		
 		this.username = user.getUsername();
 		this.password = user.getPassword();
+		
+		//here we split role of user if they have multiple role Seprated with ','
 		this.authorities = Arrays.stream(user.getRole().split(","))
 									.map(SimpleGrantedAuthority::new)
 									.collect(Collectors.toList());

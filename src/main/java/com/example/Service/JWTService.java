@@ -17,10 +17,19 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JWTService {
 
+	private String tokenForUser;
+	
+	public void setTokenForUser(String tokenForUser) {
+		this.tokenForUser = tokenForUser;
+	}
+
 	public String extractUsername(String token) {
 		return extractClaim(token,Claims::getSubject);
 	}
 	
+	public String getUserNameByToken() {
+		return this.extractUsername(this.tokenForUser);
+	}
 	
 	public Date extractExpiration(String token) {
 		return extractClaim(token, Claims::getExpiration);
@@ -38,24 +47,28 @@ public class JWTService {
 				.build()
 				.parseClaimsJws(token)
 				.getBody();
-	}
+		}
 	
 	  private Boolean isTokenExpired(String token) {
 	        return extractExpiration(token).before(new Date());
 	    }
 	  
+	  //Check token is valid or not
 	  public Boolean validateToken(String token, UserDetails userDetails)  {
 	        final String username = extractUsername(token);
 	        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	    }
 	  
-	public String generateToken(String username) {
+	  
+	  //Generate Token with help of username
+	  public String generateToken(String username) {
 		Map<String, Object> claims = new HashMap<>();
 		
 		return createToken(claims,username);
-	}
+	  }
 
 
+	 //token create here with the help os Jwts class
 	private String createToken(Map<String, Object> claims, String username) {
 		// TODO Auto-generated method stub
 		return	Jwts.builder()
